@@ -2,11 +2,9 @@ import type {
   BatchSubmitInput,
   BatchSubmitResponse,
   Capabilities,
-  ChallengeStatus,
+  EmailVerifyRequest,
   LibraryItem,
   LibraryPageResponse,
-  LoginChallenge,
-  LoginChannel,
   SessionInfo,
   TranscriptPage,
 } from "./contracts";
@@ -55,10 +53,14 @@ export async function requestJson<T>(
   });
   if (!response.ok) {
     const fallback = { code: "request_failed", message: "请求无法完成" };
-    const payload = await response.json().catch(() => fallback) as Partial<typeof fallback>;
+    const payload = await response.json().catch(() => fallback) as {
+      code?: string;
+      error?: string;
+      message?: string;
+    };
     const error = new ApiError(
       response.status,
-      payload.code ?? fallback.code,
+      payload.code ?? payload.error ?? fallback.code,
       payload.message ?? fallback.message,
     );
     if (response.status === 401) unauthorizedHandler?.();
@@ -68,36 +70,21 @@ export async function requestJson<T>(
   return response.json() as Promise<T>;
 }
 
-export function createLoginChallenge(channel: LoginChannel): Promise<LoginChallenge> {
+export function requestEmailChallenge(email: string): Promise<{ status: "accepted" }> {
   return requestJson("/api/v1/auth/challenges", {
     method: "POST",
-    body: JSON.stringify({ target_channel: channel }),
+    body: JSON.stringify({ email }),
   });
 }
 
-function browserAuthorization(browserSecret: string): HeadersInit {
-  return { Authorization: `Bearer ${browserSecret}` };
-}
-
-export function getChallengeStatus(
-  challengeId: string,
-  browserSecret: string,
-): Promise<ChallengeStatus> {
-  return requestJson("/api/v1/auth/challenges/status", {
-    method: "POST",
-    headers: browserAuthorization(browserSecret),
-    body: JSON.stringify({ public_id: challengeId }),
-  });
-}
-
-export function exchangeChallenge(
-  challengeId: string,
-  browserSecret: string,
+export function verifyEmailCode(
+  email: string,
+  code: string,
 ): Promise<SessionInfo> {
-  return requestJson("/api/v1/auth/sessions", {
+  const payload: EmailVerifyRequest = { email, code };
+  return requestJson("/api/v1/auth/verify", {
     method: "POST",
-    headers: browserAuthorization(browserSecret),
-    body: JSON.stringify({ public_id: challengeId }),
+    body: JSON.stringify(payload),
   });
 }
 

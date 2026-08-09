@@ -1,25 +1,6 @@
 {
   "components": {
     "schemas": {
-      "AuthErrorResponse": {
-        "additionalProperties": false,
-        "properties": {
-          "code": {
-            "title": "Code",
-            "type": "string"
-          },
-          "message": {
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "code",
-          "message"
-        ],
-        "title": "AuthErrorResponse",
-        "type": "object"
-      },
       "BatchItemResponse": {
         "additionalProperties": false,
         "properties": {
@@ -195,6 +176,7 @@
             ],
             "items": {
               "enum": [
+                "email",
                 "telegram",
                 "wechat"
               ],
@@ -205,103 +187,6 @@
           }
         },
         "title": "CapabilitiesResponse",
-        "type": "object"
-      },
-      "ChallengeCreateRequest": {
-        "additionalProperties": false,
-        "properties": {
-          "target_channel": {
-            "enum": [
-              "telegram",
-              "wechat"
-            ],
-            "title": "Target Channel",
-            "type": "string"
-          }
-        },
-        "required": [
-          "target_channel"
-        ],
-        "title": "ChallengeCreateRequest",
-        "type": "object"
-      },
-      "ChallengeCreateResponse": {
-        "additionalProperties": false,
-        "properties": {
-          "browser_secret": {
-            "title": "Browser Secret",
-            "type": "string"
-          },
-          "command": {
-            "title": "Command",
-            "type": "string"
-          },
-          "expires_at": {
-            "format": "date-time",
-            "title": "Expires At",
-            "type": "string"
-          },
-          "public_id": {
-            "title": "Public Id",
-            "type": "string"
-          },
-          "target_channel": {
-            "enum": [
-              "telegram",
-              "wechat"
-            ],
-            "title": "Target Channel",
-            "type": "string"
-          }
-        },
-        "required": [
-          "public_id",
-          "command",
-          "browser_secret",
-          "target_channel",
-          "expires_at"
-        ],
-        "title": "ChallengeCreateResponse",
-        "type": "object"
-      },
-      "ChallengeReferenceRequest": {
-        "additionalProperties": false,
-        "properties": {
-          "public_id": {
-            "maxLength": 200,
-            "minLength": 1,
-            "title": "Public Id",
-            "type": "string"
-          }
-        },
-        "required": [
-          "public_id"
-        ],
-        "title": "ChallengeReferenceRequest",
-        "type": "object"
-      },
-      "ChallengeStatusResponse": {
-        "additionalProperties": false,
-        "properties": {
-          "expires_at": {
-            "format": "date-time",
-            "title": "Expires At",
-            "type": "string"
-          },
-          "status": {
-            "enum": [
-              "pending",
-              "approved"
-            ],
-            "title": "Status",
-            "type": "string"
-          }
-        },
-        "required": [
-          "status",
-          "expires_at"
-        ],
-        "title": "ChallengeStatusResponse",
         "type": "object"
       },
       "ChapterResponse": {
@@ -441,6 +326,78 @@
         "title": "DispatchResponse",
         "type": "object"
       },
+      "EmailChallengeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "email": {
+            "maxLength": 254,
+            "minLength": 3,
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "title": "EmailChallengeRequest",
+        "type": "object"
+      },
+      "EmailSessionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "authenticated": {
+            "default": true,
+            "title": "Authenticated",
+            "type": "boolean"
+          },
+          "expires_at": {
+            "title": "Expires At",
+            "type": "string"
+          },
+          "login_channel": {
+            "const": "email",
+            "default": "email",
+            "title": "Login Channel",
+            "type": "string"
+          },
+          "tenant": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Tenant",
+            "type": "object"
+          }
+        },
+        "required": [
+          "expires_at",
+          "tenant"
+        ],
+        "title": "EmailSessionResponse",
+        "type": "object"
+      },
+      "EmailVerifyRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "maxLength": 6,
+            "minLength": 6,
+            "title": "Code",
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 254,
+            "minLength": 3,
+            "title": "Email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "code"
+        ],
+        "title": "EmailVerifyRequest",
+        "type": "object"
+      },
       "ErrorResponse": {
         "additionalProperties": false,
         "properties": {
@@ -458,6 +415,19 @@
           "message"
         ],
         "title": "ErrorResponse",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
         "type": "object"
       },
       "HealthResponse": {
@@ -719,36 +689,6 @@
         "title": "LibraryPageResponse",
         "type": "object"
       },
-      "SessionResponse": {
-        "additionalProperties": false,
-        "properties": {
-          "authenticated": {
-            "const": true,
-            "default": true,
-            "title": "Authenticated",
-            "type": "boolean"
-          },
-          "expires_at": {
-            "format": "date-time",
-            "title": "Expires At",
-            "type": "string"
-          },
-          "login_channel": {
-            "enum": [
-              "telegram",
-              "wechat"
-            ],
-            "title": "Login Channel",
-            "type": "string"
-          }
-        },
-        "required": [
-          "login_channel",
-          "expires_at"
-        ],
-        "title": "SessionResponse",
-        "type": "object"
-      },
       "TranscriptBlockResponse": {
         "additionalProperties": false,
         "properties": {
@@ -812,6 +752,46 @@
         "title": "TranscriptPageResponse",
         "type": "object"
       },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
       "WhySavedRequest": {
         "additionalProperties": false,
         "properties": {
@@ -833,10 +813,6 @@
       }
     },
     "securitySchemes": {
-      "BrowserSecret": {
-        "scheme": "bearer",
-        "type": "http"
-      },
       "SessionCookie": {
         "in": "cookie",
         "name": "__Host-kb_session",
@@ -852,73 +828,12 @@
   "paths": {
     "/api/v1/auth/challenges": {
       "post": {
-        "operationId": "create_challenge_api_v1_auth_challenges_post",
+        "operationId": "request_challenge_api_v1_auth_challenges_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ChallengeCreateRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChallengeCreateResponse"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "400": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
-                }
-              }
-            },
-            "description": "Bad Request"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
-                }
-              }
-            },
-            "description": "Unprocessable Entity"
-          },
-          "429": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
-                }
-              }
-            },
-            "description": "Too Many Requests"
-          }
-        },
-        "summary": "Create Challenge",
-        "tags": [
-          "authentication"
-        ]
-      }
-    },
-    "/api/v1/auth/challenges/status": {
-      "post": {
-        "operationId": "challenge_status_api_v1_auth_challenges_status_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ChallengeReferenceRequest"
+                "$ref": "#/components/schemas/EmailChallengeRequest"
               }
             }
           },
@@ -928,60 +843,23 @@
           "200": {
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChallengeStatusResponse"
-                }
+                "schema": {}
               }
             },
             "description": "Successful Response"
-          },
-          "202": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChallengeStatusResponse"
-                }
-              }
-            },
-            "description": "Accepted"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "410": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
-                }
-              }
-            },
-            "description": "Gone"
           },
           "422": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Validation Error"
           }
         },
-        "security": [
-          {
-            "BrowserSecret": []
-          }
-        ],
-        "summary": "Challenge Status",
+        "summary": "Request Challenge",
         "tags": [
           "authentication"
         ]
@@ -1013,42 +891,17 @@
           "204": {
             "description": "Successful Response"
           },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "403": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
-                }
-              }
-            },
-            "description": "Forbidden"
-          },
           "422": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Validation Error"
           }
         },
-        "security": [
-          {
-            "SessionCookie": []
-          }
-        ],
         "summary": "Logout",
         "tags": [
           "authentication"
@@ -1061,115 +914,55 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SessionResponse"
+                  "$ref": "#/components/schemas/EmailSessionResponse"
                 }
               }
             },
             "description": "Successful Response"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
-                }
-              }
-            },
-            "description": "Unprocessable Entity"
           }
         },
-        "security": [
-          {
-            "SessionCookie": []
-          }
-        ],
         "summary": "Current Session",
         "tags": [
           "authentication"
         ]
       }
     },
-    "/api/v1/auth/sessions": {
+    "/api/v1/auth/verify": {
       "post": {
-        "operationId": "exchange_session_api_v1_auth_sessions_post",
+        "operationId": "verify_api_v1_auth_verify_post",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ChallengeReferenceRequest"
+                "$ref": "#/components/schemas/EmailVerifyRequest"
               }
             }
           },
           "required": true
         },
         "responses": {
-          "201": {
+          "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SessionResponse"
+                  "$ref": "#/components/schemas/EmailSessionResponse"
                 }
               }
             },
             "description": "Successful Response"
           },
-          "202": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
-                }
-              }
-            },
-            "description": "Accepted"
-          },
-          "401": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
-                }
-              }
-            },
-            "description": "Unauthorized"
-          },
-          "410": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
-                }
-              }
-            },
-            "description": "Gone"
-          },
           "422": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthErrorResponse"
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Validation Error"
           }
         },
-        "security": [
-          {
-            "BrowserSecret": []
-          }
-        ],
-        "summary": "Exchange Session",
+        "summary": "Verify",
         "tags": [
           "authentication"
         ]
@@ -1252,7 +1045,7 @@
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Unprocessable Content"
           }
         },
         "security": [
@@ -1394,7 +1187,7 @@
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Unprocessable Content"
           }
         },
         "security": [
@@ -1440,7 +1233,7 @@
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Unprocessable Content"
           }
         },
         "security": [
@@ -1505,7 +1298,7 @@
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Unprocessable Content"
           }
         },
         "security": [
@@ -1580,7 +1373,7 @@
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Unprocessable Content"
           }
         },
         "security": [
@@ -1637,7 +1430,7 @@
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Unprocessable Content"
           }
         },
         "security": [
@@ -1694,7 +1487,7 @@
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Unprocessable Content"
           }
         },
         "security": [
@@ -1762,7 +1555,7 @@
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Unprocessable Content"
           },
           "429": {
             "content": {
@@ -1849,7 +1642,7 @@
                 }
               }
             },
-            "description": "Unprocessable Entity"
+            "description": "Unprocessable Content"
           },
           "503": {
             "content": {

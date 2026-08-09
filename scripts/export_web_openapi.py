@@ -21,6 +21,10 @@ def rendered_schema() -> str:
             library=placeholder,
             submission=placeholder,
             transcript=placeholder,
+            # Mount the email OTP router (production contract) instead of the
+            # legacy chat router so the browser contract carries the email
+            # challenge/verify/session schemas.
+            email_auth=placeholder,
         ),
         expected_origin="https://contract.invalid",
         cookie_secure=True,

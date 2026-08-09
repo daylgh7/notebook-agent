@@ -786,7 +786,7 @@ def _build_database_url() -> str:
     user = _env("POSTGRES_USER", "postgres")
     password = _require("POSTGRES_PASSWORD")
     host = _env("POSTGRES_HOST", "localhost")
-    port = _env("POSTGRES_PORT", "5432")
+    port = _env("POSTGRES_PORT", "5434")
     db = _env("POSTGRES_DB", "kb")
     return f"postgresql+psycopg://{user}:{password}@{host}:{port}/{db}"
 

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import hmac
 from dataclasses import dataclass
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Header, Request, Response
 from fastapi.responses import JSONResponse
@@ -39,6 +39,7 @@ class EmailVerifyRequest(EmailChallengeRequest):
 
 class EmailSessionResponse(_StrictSchema):
     authenticated: bool = True
+    login_channel: Literal["email"] = "email"
     expires_at: str
     tenant: dict[str, int]
 
@@ -131,7 +132,7 @@ def build_email_auth_router(
             return _error("email_delivery_unavailable", 503)
         return JSONResponse({"status": "accepted"}, status_code=200)
 
-    @router.post("/verify", status_code=200)
+    @router.post("/verify", status_code=200, response_model=EmailSessionResponse)
     def verify(payload: EmailVerifyRequest, request: Request) -> Response:
         if error := same_origin(request):
             return error
@@ -149,7 +150,7 @@ def build_email_auth_router(
         _set_session_cookies(response, verified, secure=cookie_secure)
         return response
 
-    @router.get("/session", status_code=200)
+    @router.get("/session", status_code=200, response_model=EmailSessionResponse)
     def current_session(request: Request) -> Response:
         try:
             session = email_auth.resolve_session(request.cookies.get(SESSION_COOKIE_NAME, ""))

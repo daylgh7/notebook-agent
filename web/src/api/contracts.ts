@@ -2,10 +2,10 @@ import type { components } from "./schema";
 
 type Schemas = components["schemas"];
 
-export type LoginChannel = Schemas["ChallengeCreateRequest"]["target_channel"];
-export type LoginChallenge = Schemas["ChallengeCreateResponse"];
-export type ChallengeStatus = Schemas["ChallengeStatusResponse"];
-export type SessionInfo = Schemas["SessionResponse"];
+export type LoginChannel = Capabilities["web_login_channels"][number];
+export type EmailChallengeRequest = Schemas["EmailChallengeRequest"];
+export type EmailVerifyRequest = Schemas["EmailVerifyRequest"];
+export type SessionInfo = Schemas["EmailSessionResponse"];
 export type Capabilities = Schemas["CapabilitiesResponse"];
 
 export type BatchSubmitInput = Schemas["BatchSaveRequest"];

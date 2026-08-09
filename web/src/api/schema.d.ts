@@ -13,25 +13,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Create Challenge */
-        post: operations["create_challenge_api_v1_auth_challenges_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/auth/challenges/status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Challenge Status */
-        post: operations["challenge_status_api_v1_auth_challenges_status_post"];
+        /** Request Challenge */
+        post: operations["request_challenge_api_v1_auth_challenges_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -56,7 +39,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/auth/sessions": {
+    "/api/v1/auth/verify": {
         parameters: {
             query?: never;
             header?: never;
@@ -65,8 +48,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Exchange Session */
-        post: operations["exchange_session_api_v1_auth_sessions_post"];
+        /** Verify */
+        post: operations["verify_api_v1_auth_verify_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -248,13 +231,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** AuthErrorResponse */
-        AuthErrorResponse: {
-            /** Code */
-            code: string;
-            /** Message */
-            message: string;
-        };
         /** BatchItemResponse */
         BatchItemResponse: {
             /** Input Index */
@@ -331,52 +307,7 @@ export interface components {
              *       "wechat"
              *     ]
              */
-            web_login_channels: ("telegram" | "wechat")[];
-        };
-        /** ChallengeCreateRequest */
-        ChallengeCreateRequest: {
-            /**
-             * Target Channel
-             * @enum {string}
-             */
-            target_channel: "telegram" | "wechat";
-        };
-        /** ChallengeCreateResponse */
-        ChallengeCreateResponse: {
-            /** Browser Secret */
-            browser_secret: string;
-            /** Command */
-            command: string;
-            /**
-             * Expires At
-             * Format: date-time
-             */
-            expires_at: string;
-            /** Public Id */
-            public_id: string;
-            /**
-             * Target Channel
-             * @enum {string}
-             */
-            target_channel: "telegram" | "wechat";
-        };
-        /** ChallengeReferenceRequest */
-        ChallengeReferenceRequest: {
-            /** Public Id */
-            public_id: string;
-        };
-        /** ChallengeStatusResponse */
-        ChallengeStatusResponse: {
-            /**
-             * Expires At
-             * Format: date-time
-             */
-            expires_at: string;
-            /**
-             * Status
-             * @enum {string}
-             */
-            status: "pending" | "approved";
+            web_login_channels: ("email" | "telegram" | "wechat")[];
         };
         /**
          * ChapterResponse
@@ -421,12 +352,49 @@ export interface components {
              */
             updated_at: string;
         };
+        /** EmailChallengeRequest */
+        EmailChallengeRequest: {
+            /** Email */
+            email: string;
+        };
+        /** EmailSessionResponse */
+        EmailSessionResponse: {
+            /**
+             * Authenticated
+             * @default true
+             */
+            authenticated: boolean;
+            /** Expires At */
+            expires_at: string;
+            /**
+             * Login Channel
+             * @default email
+             * @constant
+             */
+            login_channel: "email";
+            /** Tenant */
+            tenant: {
+                [key: string]: number;
+            };
+        };
+        /** EmailVerifyRequest */
+        EmailVerifyRequest: {
+            /** Code */
+            code: string;
+            /** Email */
+            email: string;
+        };
         /** ErrorResponse */
         ErrorResponse: {
             /** Code */
             code: string;
             /** Message */
             message: string;
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
         };
         /** HealthResponse */
         HealthResponse: {
@@ -501,25 +469,6 @@ export interface components {
             /** Total */
             total: number;
         };
-        /** SessionResponse */
-        SessionResponse: {
-            /**
-             * Authenticated
-             * @default true
-             * @constant
-             */
-            authenticated: true;
-            /**
-             * Expires At
-             * Format: date-time
-             */
-            expires_at: string;
-            /**
-             * Login Channel
-             * @enum {string}
-             */
-            login_channel: "telegram" | "wechat";
-        };
         /** TranscriptBlockResponse */
         TranscriptBlockResponse: {
             /** End Sec */
@@ -540,6 +489,19 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** ValidationError */
+        ValidationError: {
+            /** Context */
+            ctx?: Record<string, never>;
+            /** Input */
+            input?: unknown;
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+        };
         /** WhySavedRequest */
         WhySavedRequest: {
             /** Why Saved */
@@ -554,7 +516,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    create_challenge_api_v1_auth_challenges_post: {
+    request_challenge_api_v1_auth_challenges_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -563,58 +525,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ChallengeCreateRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChallengeCreateResponse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
-                };
-            };
-            /** @description Too Many Requests */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
-                };
-            };
-        };
-    };
-    challenge_status_api_v1_auth_challenges_status_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ChallengeReferenceRequest"];
+                "application/json": components["schemas"]["EmailChallengeRequest"];
             };
         };
         responses: {
@@ -624,43 +535,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChallengeStatusResponse"];
+                    "application/json": unknown;
                 };
             };
-            /** @description Accepted */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChallengeStatusResponse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
-                };
-            };
-            /** @description Gone */
-            410: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
-                };
-            };
-            /** @description Unprocessable Entity */
+            /** @description Validation Error */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -680,25 +564,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SessionResponse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
+                    "application/json": components["schemas"]["EmailSessionResponse"];
                 };
             };
         };
@@ -721,36 +587,18 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
-                };
-            };
-            /** @description Unprocessable Entity */
+            /** @description Validation Error */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
     };
-    exchange_session_api_v1_auth_sessions_post: {
+    verify_api_v1_auth_verify_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -759,53 +607,26 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ChallengeReferenceRequest"];
+                "application/json": components["schemas"]["EmailVerifyRequest"];
             };
         };
         responses: {
             /** @description Successful Response */
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SessionResponse"];
+                    "application/json": components["schemas"]["EmailSessionResponse"];
                 };
             };
-            /** @description Accepted */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
-                };
-            };
-            /** @description Gone */
-            410: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
-                };
-            };
-            /** @description Unprocessable Entity */
+            /** @description Validation Error */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AuthErrorResponse"];
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -870,7 +691,7 @@ export interface operations {
                     "application/json": components["schemas"]["DispatchResponse"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -907,7 +728,7 @@ export interface operations {
                     "application/json": components["schemas"]["LibraryPageResponse"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -938,7 +759,7 @@ export interface operations {
                     "application/json": components["schemas"]["LibraryItemResponse"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -975,7 +796,7 @@ export interface operations {
                     "application/json": components["schemas"]["LibraryItemResponse"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -1009,7 +830,7 @@ export interface operations {
                     "application/json": components["schemas"]["TranscriptPageResponse"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -1042,7 +863,7 @@ export interface operations {
                     "application/json": components["schemas"]["LibraryItemResponse"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -1075,7 +896,7 @@ export interface operations {
                     "application/json": components["schemas"]["LibraryItemResponse"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -1109,7 +930,7 @@ export interface operations {
                     "application/json": components["schemas"]["LibraryItemResponse"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
@@ -1163,7 +984,7 @@ export interface operations {
                     "application/json": components["schemas"]["BatchSaveResponse"];
                 };
             };
-            /** @description Unprocessable Entity */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;

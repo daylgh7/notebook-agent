@@ -366,7 +366,7 @@ def _health_target_fingerprint(
             if database_url
             else {
                 "host": env.get("POSTGRES_HOST", "localhost").lower(),
-                "port": env.get("POSTGRES_PORT", "5432"),
+                "port": env.get("POSTGRES_PORT", "5434"),
                 "username": env.get("POSTGRES_USER", "postgres"),
                 "database": env.get("POSTGRES_DB", "kb"),
             }

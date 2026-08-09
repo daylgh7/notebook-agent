@@ -50,6 +50,18 @@ describe("application shell", () => {
     expect(menu).not.toHaveAttribute("open");
   });
 
+  it("labels the email login channel in the account menu", async () => {
+    render(
+      <MemoryRouter>
+        <AppShell loginChannel="email" onLogout={() => undefined}>
+          <h1>我的资料库</h1>
+        </AppShell>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByLabelText("打开账户菜单，当前登录方式：邮箱")).toBeInTheDocument();
+  });
+
   it("keeps a failed logout visible without pretending the session ended", async () => {
     render(
       <MemoryRouter>

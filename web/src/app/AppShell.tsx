@@ -4,6 +4,12 @@ import type { LoginChannel } from "../api/contracts";
 import { BrandLogo } from "./BrandLogo";
 import { RouteLink } from "./RouteTransition";
 
+const LOGIN_CHANNEL_LABELS: Record<LoginChannel, string> = {
+  email: "邮箱",
+  telegram: "Telegram",
+  wechat: "微信",
+};
+
 interface AppShellProps {
   children: ReactNode;
   loginChannel: LoginChannel;
@@ -13,7 +19,7 @@ interface AppShellProps {
 }
 
 export function AppShell({ children, loginChannel, onLogout, logoutPending = false, logoutError }: AppShellProps) {
-  const loginChannelLabel = loginChannel === "telegram" ? "Telegram" : "微信";
+  const loginChannelLabel = LOGIN_CHANNEL_LABELS[loginChannel];
   const accountMenuRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {

@@ -150,6 +150,16 @@ h2 { line-height: 1.1; }
 .login-flow { margin-top: 2rem; }
 .login-flow .challenge-card { margin-top: 0; }
 .login-flow > .login-back-button { margin-top: 0.65rem; }
+.email-login { margin-top: 2rem; display: grid; gap: 1.25rem; }
+.email-login__intro { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.6; }
+.email-login__form { display: grid; gap: 1rem; }
+.email-login__field { display: grid; gap: 0.45rem; }
+.email-login__label { font-size: 0.78rem; font-weight: 800; color: var(--ink); }
+.email-login__input { min-height: 48px; padding: 0.72rem 1rem; border: 1px solid var(--line); border-radius: 0.85rem; background: var(--paper); color: var(--ink); transition: border-color 150ms ease, box-shadow 150ms ease; }
+.email-login__input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(187, 75, 47, 0.16); }
+.email-login__input::placeholder { color: var(--muted); }
+.email-login__input--code { letter-spacing: 0.35em; font-size: 1.4rem; font-weight: 800; text-align: center; }
+.email-login__actions { display: grid; gap: 0.5rem; }
 .privacy-note { margin: 1.5rem 0 0; padding-top: 1rem; border-top: 1px solid rgba(91, 80, 63, 0.1); color: var(--muted); font-size: 0.75rem; line-height: 1.55; }
 .challenge-card { display: grid; grid-template-columns: auto 1fr; gap: 1rem; margin-top: 2rem; padding: 1.15rem; border: 1px solid var(--line); border-radius: 1rem; background: #f3eee4; }
 .challenge-card code { display: block; padding: 0.85rem; border-radius: 0.6rem; background: var(--ink); color: #fff; font-size: clamp(0.95rem, 4vw, 1.1rem); overflow-wrap: anywhere; }
